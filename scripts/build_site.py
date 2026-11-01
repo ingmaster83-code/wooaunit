@@ -42,6 +42,10 @@ def py_context(n):
     if n <= 60: return "중대형 아파트 크기"
     return "대형 아파트·단독주택·상가 크기"
 
+# 다른 우아 사이트 연결: 아파트 실거래가(우아아파트)·이사 길일(우아달력)
+XL_PY = [("🏢 아파트 실거래가·시세 찾기", "https://wooaapt.wooahouse.com/"), ("🚚 이사하기 좋은 날(손 없는 날)", "https://wooacal.wooahouse.com/imsa/")]
+
+
 def page_pyeong(n):
     m2 = n * PY
     path = "/pyeong/%d평/" % n
@@ -58,7 +62,7 @@ def page_pyeong(n):
 {t}
 <h2 class="group-title">📌 계산 방법</h2>
 <ul class="lead" style="margin-left:20px"><li>평 → ㎡: 평수 × 3.3058 (정확히는 400÷121). {n}평 × 3.3058 = {n2(m2)}㎡</li><li>㎡ → 평: 제곱미터 × 0.3025</li><li>아파트 ‘○○평형’은 보통 공급면적(전용+공용) 기준이라 전용면적은 70~85%(전용률)입니다.</li><li>법적으로 평은 사용이 제한되어 ㎡ 표기가 원칙이지만 부동산 거래에서는 여전히 널리 씁니다.</li></ul>
-{chips([("평↔㎡ 변환표", "/pyeong/"), (f"{int(round(m2))}㎡ 몇 평", "/sqm/%d/" % int(round(m2))) if int(round(m2)) in SQM_LIST else ("㎡ → 평", "/sqm/")])}
+{chips([("평↔㎡ 변환표", "/pyeong/"), (f"{int(round(m2))}㎡ 몇 평", "/sqm/%d/" % int(round(m2))) if int(round(m2)) in SQM_LIST else ("㎡ → 평", "/sqm/")] + XL_PY)}
 """
     faq = [(f"{n}평은 몇 제곱미터인가요?", f"{n2(m2)}㎡입니다(1평=3.3058㎡)."), (f"{n}평은 몇 ft²인가요?", f"약 {n2(m2 * SQFT, 1)}제곱피트입니다."),
            (f"아파트 {n}평형의 전용면적은?", f"공급면적 {n}평형이면 전용률 74~84% 기준 전용 약 {n2(apt_lo, 1)}~{n2(apt_hi, 1)}㎡입니다.")]
@@ -79,7 +83,7 @@ def page_sqm(m):
 {t}
 <h2 class="group-title">📌 계산 방법</h2>
 <ul class="lead" style="margin-left:20px"><li>㎡ → 평: {m} × 0.3025 = {n2(py, 2)}평</li><li>평 → ㎡: 평수 × 3.3058</li><li>아파트 전용면적(㎡)에 1.2~1.35배를 곱하면 공급면적을 대략 가늠할 수 있습니다(단지·평면에 따라 다름).</li></ul>
-{chips([("㎡↔평 변환표", "/sqm/"), (f"{int(round(py))}평 몇 ㎡", "/pyeong/%d평/" % int(round(py))) if int(round(py)) in PY_LIST else ("평 → ㎡", "/pyeong/")])}
+{chips([("㎡↔평 변환표", "/sqm/"), (f"{int(round(py))}평 몇 ㎡", "/pyeong/%d평/" % int(round(py))) if int(round(py)) in PY_LIST else ("평 → ㎡", "/pyeong/")] + XL_PY)}
 """
     faq = [(f"{m}㎡는 몇 평인가요?", f"약 {n2(py, 2)}평입니다."), ("아파트 전용면적 84㎡는 몇 평형인가요?", "전용 84㎡는 공급면적 기준 약 33~34평형(‘국민평형’)이고 전용면적만으로는 약 25.4평입니다.")]
     write(path, layout(path, f"{m}㎡는 몇 평? {n2(py, 2)}평 (㎡↔평 변환)", f"{m}㎡는 약 {n2(py, 2)}평({n2(m * SQFT, 1)}ft²). 아파트 전용면적 환산과 계산 방법.", body, faq, [("홈", "/"), ("㎡→평", "/sqm/"), (f"{m}㎡", path)]), "0.7" if m in APT or m % 10 == 0 else "0.5")
